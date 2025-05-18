@@ -10,7 +10,7 @@ app.use(express.json())
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.0wvxfgw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
+console.log(uri)
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -26,6 +26,7 @@ async function run() {
 
  const myDB=client.db('myDB')
  const myColl=myDB.collection("coffees")
+ const userDB=myDB.collection("UserDataBase")
    
     app.post('/api/coffees',async(req,res)=>{
     const  mydoc=req.body
@@ -71,6 +72,36 @@ console.log(req.body)
       const id=req.params.id;
       const query={_id:new ObjectId(id)}
       const result=await myColl.deleteOne(query)
+      res.send(result)
+    })
+    app.post("/api/users",async(req,res)=>{
+      const usersdata=req.body
+
+      const result=await userDB.insertOne(usersdata)
+      res.send(result)
+    })
+    app.get("/api/profile",async(req,res)=>{
+      const cursor= userDB.find()
+      const result=await cursor.toArray()
+      res.send(result)
+    })
+    app.delete("/api/profiledelete/:id",async(req,res)=>{
+      console.log('server is hiting')
+       const id=req.params.id
+      console.log(id)
+       const query={_id: new ObjectId(id)}
+       const result=await userDB.deleteOne(query)
+       res.send(result)
+    })
+    app.patch("/api/user",async(req,res)=>{
+      const {email,lastSignInTime}=req.body
+      const filter={email:email}
+      const updateDoc={
+        $set:{
+          lastSignInTime:lastSignInTime,
+        }
+      }
+      const result=await userDB.updateOne(filter,updateDoc)
       res.send(result)
     })
   
