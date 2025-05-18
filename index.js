@@ -10,7 +10,7 @@ app.use(express.json())
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.0wvxfgw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-console.log(uri)
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -27,12 +27,17 @@ async function run() {
  const myDB=client.db('myDB')
  const myColl=myDB.collection("coffees")
  const userDB=myDB.collection("UserDataBase")
-   
+     
+
+
+ app.get("/api",(req,res)=>{
+  res.send('server is ready to work')
+ })
     app.post('/api/coffees',async(req,res)=>{
     const  mydoc=req.body
 
 const result=await myColl.insertOne(mydoc)
-        console.log('result')
+      
         res.send(result)
     })
      app.get('/api/details/:id',async(req,res)=>{
@@ -49,7 +54,7 @@ const result=await myColl.insertOne(mydoc)
     })
     app.put("/api/updatecoffee/:id",async(req,res)=>{
 const id=req.params.id
-console.log(req.body)
+
 
 
       const filter={_id:new ObjectId(id)}
@@ -57,7 +62,7 @@ console.log(req.body)
         $set:req.body }
       
       const result=await myColl.updateOne(filter,updateDoc)
-      console.log(result)
+      
       res.send(result)
 
    } )
@@ -86,7 +91,7 @@ console.log(req.body)
       res.send(result)
     })
     app.delete("/api/profiledelete/:id",async(req,res)=>{
-      console.log('server is hiting')
+      
        const id=req.params.id
       console.log(id)
        const query={_id: new ObjectId(id)}
@@ -106,7 +111,7 @@ console.log(req.body)
     })
   
     await client.db("admin").command({ ping: 1 });
-    console.log(process.env.DB_USER)
+    
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     
