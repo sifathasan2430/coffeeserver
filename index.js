@@ -30,7 +30,7 @@ async function run() {
      
 
 
- app.get("/api",(req,res)=>{
+ app.get("/",(req,res)=>{
   res.send('server is ready to work')
  })
     app.post('/api/coffees',async(req,res)=>{
